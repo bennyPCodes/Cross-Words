@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cross-Words</title>
+<meta name="description" content="A crossword game of encouraging KJV Bible verses.">
+<meta name="theme-color" content="#101D36">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cross-Words">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Figtree:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+<section id="home" class="screen on">
+  <div class="hero">
+    <div class="tiles" aria-hidden="true">
+      <span style="grid-area:1/2">C</span><span style="grid-area:2/2">R</span>
+      <span style="grid-area:3/1">W</span><span class="gold" style="grid-area:3/2">O</span><span style="grid-area:3/3">R</span><span style="grid-area:3/4">D</span><span style="grid-area:3/5">S</span>
+      <span style="grid-area:4/2">S</span><span style="grid-area:5/2">S</span>
+    </div>
+    <h1>Cross-Words</h1>
+    <p class="tag">Solve the crossword. Uncover the verse.</p>
+  </div>
+  <nav class="home-actions">
+    <button id="btnPlay" class="primary"><span class="t">Continue</span><span class="s" id="playSub">Level 1</span></button>
+    <button id="btnDaily" class="row"><span class="t">Daily verse</span><span class="s" id="dailySub"></span></button>
+    <button class="row" data-go="levels"><span class="t">Levels</span><span class="s" id="levelsSub"></span></button>
+    <button class="row" data-go="verses"><span class="t">My verses</span><span class="s" id="versesSub"></span></button>
+    <button class="row" data-go="stats"><span class="t">Progress and awards</span><span class="s" id="statsSub"></span></button>
+  </nav>
+  <div id="installBar" class="install" hidden>
+    <p id="installText">Add Cross-Words to your home screen to play offline.</p>
+    <button id="btnInstall">Install</button>
+  </div>
+  <figure id="lastVerse" class="last" hidden><blockquote></blockquote><figcaption></figcaption></figure>
+</section>
+
+<section id="levels" class="screen">
+  <header class="bar"><button class="back" data-go="home" aria-label="Back to menu">‹</button><h2>Levels</h2></header>
+  <div class="scroll"><div id="lvGrid" class="lvgrid"></div></div>
+</section>
+
+<section id="verses" class="screen">
+  <header class="bar"><button class="back" data-go="home" aria-label="Back to menu">‹</button><h2>My verses</h2></header>
+  <div class="vtools">
+    <input id="vSearch" type="search" placeholder="Search words or books" aria-label="Search your verses">
+    <div class="seg" role="group" aria-label="Filter">
+      <button data-vf="all" class="on">All</button><button data-vf="fav">Saved</button>
+    </div>
+  </div>
+  <div class="scroll"><div id="vList"></div></div>
+</section>
+
+<section id="stats" class="screen">
+  <header class="bar"><button class="back" data-go="home" aria-label="Back to menu">‹</button><h2>Progress and awards</h2></header>
+  <div class="scroll pad">
+    <dl id="statRows" class="statrows"></dl>
+    <h3 class="sub">Awards</h3>
+    <ul id="achList" class="ach"></ul>
+    <h3 class="sub">Settings</h3>
+    <label class="switch"><input type="checkbox" id="sndToggle"> Sound effects</label>
+    <button id="btnReset" class="danger">Reset all progress</button>
+  </div>
+</section>
+
+<section id="game" class="screen">
+  <header class="gbar">
+    <button id="gBack" class="back" aria-label="Back to menu">‹</button>
+    <div id="gTitle" class="gtitle">Level 1</div>
+    <div id="gTime" class="gtime" aria-label="Time">0:00</div>
+  </header>
+  <div id="verseStrip" class="verse-strip" aria-label="Hidden verse"></div>
+  <div id="gridWrap" class="grid-wrap"><div id="grid" class="grid"></div></div>
+  <div class="cluebar">
+    <button id="cPrev" aria-label="Previous clue">‹</button>
+    <div id="clue" class="clue" aria-live="polite"><b id="clueNum"></b><span id="clueText"></span><em id="clueCtx"></em></div>
+    <button id="cNext" aria-label="Next clue">›</button>
+  </div>
+  <div class="tools">
+    <button id="hLetter">Reveal letter <small>−40</small></button>
+    <button id="hCtx">Show verse context <small>−25</small></button>
+    <button id="hGuess" class="guess">Guess the verse</button>
+  </div>
+  <div id="kbd" class="kbd" aria-label="Keyboard"></div>
+</section>
+
+</div>
+
+<div id="guessSheet" class="overlay" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="guessTitle">
+    <h2 id="guessTitle">Which verse is it?</h2>
+    <p class="note">Guess right for bonus points. The more still hidden, the bigger the bonus. A wrong guess costs 100.</p>
+    <div id="guessVerse" class="verse-strip in-sheet"></div>
+    <div id="guessOpts" class="opts"></div>
+    <button class="ghost" data-close>Keep solving</button>
+  </div>
+</div>
+
+<div id="resSheet" class="overlay" hidden>
+  <div class="sheet res" role="dialog" aria-modal="true" aria-labelledby="resTitle">
+    <h2 id="resTitle">Level complete</h2>
+    <p id="resStars" class="stars"></p>
+    <blockquote id="resVerse" class="reveal"></blockquote>
+    <p id="resRef" class="ref"></p>
+    <dl id="resRows" class="breakdown"></dl>
+    <div class="ractions">
+      <button id="rCopy">Copy</button><button id="rShare">Share</button><button id="rFav">♡ Save</button>
+    </div>
+    <div class="rnav"><button id="rReplay" class="ghost">Replay</button><button id="rNext" class="primary">Next level</button></div>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="verses.js"></script>
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
